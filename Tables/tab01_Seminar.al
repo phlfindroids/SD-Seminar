@@ -71,11 +71,20 @@ table 50101 "CSD Seminar"
             AutoFormatType = 1;
 
         }
-        field(110; "CSD Gen. Prod. Posting Croup"; Code[10])
+        field(110; "CSD Gen. Prod. Posting Group"; Code[10])
         {
             Caption = 'Gen. Prod. Posting Group';
             TableRelation = "Gen. Product Posting Group";
-
+            trigger OnValidate()
+            begin
+                if (xRec."CSD Gen. Prod. Posting Group" <>
+                    "CSD Gen. Prod. Posting Group") then begin
+                    if GenProdPostingGroup.ValidateVatProdPostingGroup
+                    (GenProdPostingGroup, "CSD Gen. Prod. Posting Group") then
+                        Validate("CSD VAT Prod. Posting Group",
+                        GenProdPostingGroup."Def. VAT Prod. Posting Group");
+                end;
+            end;
         }
         field(120; "CSD VAT Prod. Posting Group"; Code[10])
         {
@@ -139,4 +148,18 @@ table 50101 "CSD Seminar"
         "CSD Last Date Modified" := Today;
     end;
 
+    procedure AssistEdit(): Boolean
+    begin
+        with Seminar do begin
+            Seminar := Rec;
+            SeminarSetup.get;
+            SeminarSetup.TestField("CSD Seminar Nos.");
+            if NoSeriesMgt.SelectSeries(SeminarSetup."CSD Seminar Nos."
+            , xRec."CSD No. Series", "CSD No. Series") then begin
+                NoSeriesMgt.SetSeries("No.");
+                Rec := Seminar;
+                exit(true);
+            end;
+        end;
+    end;
 }
