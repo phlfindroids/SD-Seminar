@@ -157,6 +157,11 @@ table 50132 "CSD Seminar Ledger Entry"
         key(Key1; "Entry No.")
         {
         }
+        //Chapter 8 Lab 2-1
+        //Added key 2
+        key(key2;"Document No.","Posting Date")
+        {
+        }
     }
 
     fieldgroups
